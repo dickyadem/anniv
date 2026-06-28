@@ -876,26 +876,32 @@
     (function () {
       const audio = document.getElementById('js-music');
       const btn   = document.getElementById('js-music-btn');
-      let started = false;
 
       audio.volume = 0.35;
 
-      function tryPlay() {
-        if (started) return;
-        started = true;
+      function startMusic() {
         audio.play().then(() => {
           btn.classList.remove('muted');
-        }).catch(() => {
-          started = false; /* allow retry on click */
-        });
+        }).catch(() => {});
       }
 
-      /* mulai saat scroll pertama */
-      window.addEventListener('scroll', tryPlay, { once: true, passive: true });
+      /* coba autoplay langsung */
+      startMusic();
+
+      /* fallback: jika browser blokir autoplay, coba lagi di interaksi pertama */
+      function onFirstInteraction() {
+        if (audio.paused) startMusic();
+        document.removeEventListener('click', onFirstInteraction);
+        document.removeEventListener('keydown', onFirstInteraction);
+        document.removeEventListener('touchstart', onFirstInteraction);
+      }
+      document.addEventListener('click', onFirstInteraction);
+      document.addEventListener('keydown', onFirstInteraction);
+      document.addEventListener('touchstart', onFirstInteraction, { passive: true });
 
       /* toggle tombol */
-      btn.addEventListener('click', () => {
-        if (!started) { tryPlay(); return; }
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         if (audio.paused) {
           audio.play().then(() => btn.classList.remove('muted')).catch(() => {});
         } else {
