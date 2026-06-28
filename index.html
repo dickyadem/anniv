@@ -549,6 +549,115 @@
       to   { transform: scaleY(1); }
     }
 
+    /* ─── INTRO OVERLAY ─────────────────────────────── */
+    .intro-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .intro-overlay.is-opening {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .intro-overlay.is-opening .intro-card {
+      transform: scale(1.07) translateY(-18px);
+      opacity: 0;
+    }
+
+    .intro-card {
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      padding: 4rem 2.5rem;
+      border: 1px solid rgba(212, 121, 106, 0.18);
+      position: relative;
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity  0.45s ease;
+    }
+
+    .intro-card::before,
+    .intro-card::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+    }
+
+    .intro-card::before {
+      top: -1px; left: -1px;
+      border-top: 1px solid var(--accent);
+      border-left: 1px solid var(--accent);
+    }
+
+    .intro-card::after {
+      bottom: -1px; right: -1px;
+      border-bottom: 1px solid var(--accent);
+      border-right: 1px solid var(--accent);
+    }
+
+    .intro-seal {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 1px solid rgba(212, 121, 106, 0.5);
+      margin: 0 auto 2.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .intro-seal svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--accent);
+    }
+
+    .intro-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.2rem;
+    }
+
+    .intro-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.9rem, 6vw, 3rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+    }
+
+    .intro-date {
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      color: var(--accent-light);
+      margin-bottom: 2.5rem;
+    }
+
+    .intro-hint {
+      font-size: 0.58rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      animation: hint-pulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes hint-pulse {
+      0%, 100% { opacity: 0.4; }
+      50%       { opacity: 1;   }
+    }
+
     /* ─── HERO DATE ─────────────────────────────────── */
     .hero-date {
       font-size: clamp(0.55rem, 1.4vw, 0.72rem);
@@ -831,6 +940,21 @@
     </div>
   </section>
 
+  <!-- INTRO OVERLAY -->
+  <div class="intro-overlay" id="js-intro">
+    <div class="intro-card">
+      <div class="intro-seal">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21C12 21 3 14.5 3 8.5C3 5.46 5.46 3 8.5 3C10.24 3 11.91 3.81 13 5.08C14.09 3.81 15.76 3 17.5 3C20.54 3 23 5.46 23 8.5C23 14.5 12 21 12 21Z" transform="translate(-1 0)"/>
+        </svg>
+      </div>
+      <p class="intro-label">untuk kamu</p>
+      <h1 class="intro-title">Sebuah<br>Surat<br>Kecil</h1>
+      <p class="intro-date">29 . 01 . 2026</p>
+      <p class="intro-hint">sentuh untuk membuka</p>
+    </div>
+  </div>
+
   <!-- MUSIC -->
   <audio id="js-music" loop preload="auto">
     <source src="music.mpeg" type="audio/mpeg">
@@ -872,34 +996,21 @@
 
     document.querySelectorAll('video[preload="none"]').forEach(v => videoObserver.observe(v));
 
-    /* ── BACKGROUND MUSIC ── */
+    /* ── INTRO OVERLAY ── */
     (function () {
-      const audio = document.getElementById('js-music');
-      const btn   = document.getElementById('js-music-btn');
+      const overlay = document.getElementById('js-intro');
+      const audio   = document.getElementById('js-music');
+      const btn     = document.getElementById('js-music-btn');
 
       audio.volume = 0.35;
 
-      function startMusic() {
-        audio.play().then(() => {
-          btn.classList.remove('muted');
-        }).catch(() => {});
-      }
+      overlay.addEventListener('click', () => {
+        overlay.classList.add('is-opening');
+        audio.play().then(() => btn.classList.remove('muted')).catch(() => {});
+        setTimeout(() => overlay.remove(), 900);
+      });
 
-      /* coba autoplay langsung */
-      startMusic();
-
-      /* fallback: jika browser blokir autoplay, coba lagi di interaksi pertama */
-      function onFirstInteraction() {
-        if (audio.paused) startMusic();
-        document.removeEventListener('click', onFirstInteraction);
-        document.removeEventListener('keydown', onFirstInteraction);
-        document.removeEventListener('touchstart', onFirstInteraction);
-      }
-      document.addEventListener('click', onFirstInteraction);
-      document.addEventListener('keydown', onFirstInteraction);
-      document.addEventListener('touchstart', onFirstInteraction, { passive: true });
-
-      /* toggle tombol */
+      /* toggle tombol setelah overlay hilang */
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (audio.paused) {
