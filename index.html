@@ -476,6 +476,79 @@
     .g-f { grid-area: f; height: 56dvh; }
     .g-g { grid-area: g; height: 56dvh; }
 
+    /* ─── MUSIC BUTTON ──────────────────────────────── */
+    .music-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 999;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(212, 121, 106, 0.45);
+      background: rgba(9, 9, 11, 0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.3s, background 0.3s, transform 0.2s;
+      opacity: 0;
+      animation: btn-appear 0.6s 1.8s forwards;
+    }
+
+    @keyframes btn-appear {
+      to { opacity: 1; }
+    }
+
+    .music-btn:hover {
+      border-color: var(--accent);
+      background: rgba(212, 121, 106, 0.12);
+      transform: scale(1.08);
+    }
+
+    .music-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--accent-light);
+      transition: fill 0.3s;
+    }
+
+    .music-btn.muted svg { fill: var(--text-muted); }
+
+    .music-btn .eq-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 2.5px;
+      height: 16px;
+    }
+
+    .music-btn .eq-bars span {
+      display: block;
+      width: 3px;
+      border-radius: 2px;
+      background: var(--accent-light);
+      transition: background 0.3s;
+      animation: eq 1.1s ease-in-out infinite alternate;
+    }
+
+    .music-btn.muted .eq-bars span {
+      background: var(--text-muted);
+      animation: none;
+      height: 4px !important;
+    }
+
+    .music-btn .eq-bars span:nth-child(1) { height: 6px; animation-delay: 0s; }
+    .music-btn .eq-bars span:nth-child(2) { height: 14px; animation-delay: 0.18s; }
+    .music-btn .eq-bars span:nth-child(3) { height: 9px; animation-delay: 0.35s; }
+    .music-btn .eq-bars span:nth-child(4) { height: 12px; animation-delay: 0.1s; }
+
+    @keyframes eq {
+      from { transform: scaleY(0.35); }
+      to   { transform: scaleY(1); }
+    }
+
     /* ─── HERO DATE ─────────────────────────────────── */
     .hero-date {
       font-size: clamp(0.55rem, 1.4vw, 0.72rem);
@@ -758,6 +831,16 @@
     </div>
   </section>
 
+  <!-- MUSIC -->
+  <audio id="js-music" loop preload="none">
+    <source src="music.mpeg" type="audio/mpeg">
+  </audio>
+  <button type="button" class="music-btn muted" id="js-music-btn" aria-label="Toggle music" title="Musik">
+    <span class="eq-bars">
+      <span></span><span></span><span></span><span></span>
+    </span>
+  </button>
+
   <!-- SURAT KECIL -->
   <section class="letter-section">
     <div class="letter-inner">
@@ -788,6 +871,59 @@
     }, { threshold: 0.2 });
 
     document.querySelectorAll('video[preload="none"]').forEach(v => videoObserver.observe(v));
+
+    /* ── BACKGROUND MUSIC ── */
+    (function () {
+      const audio = document.getElementById('js-music');
+      const btn   = document.getElementById('js-music-btn');
+      let started = false;
+      let playing = false;
+
+      audio.volume = 0;
+
+      function fadeIn() {
+        audio.volume = 0;
+        const step = setInterval(() => {
+          if (audio.volume < 0.38) {
+            audio.volume = Math.min(0.38, audio.volume + 0.02);
+          } else {
+            clearInterval(step);
+          }
+        }, 80);
+      }
+
+      function startMusic() {
+        if (started) return;
+        started = true;
+        audio.load();
+        audio.play().then(() => {
+          playing = true;
+          btn.classList.remove('muted');
+          fadeIn();
+        }).catch(() => {});
+      }
+
+      /* mulai saat scroll pertama */
+      window.addEventListener('scroll', startMusic, { once: true, passive: true });
+
+      /* toggle tombol */
+      btn.addEventListener('click', () => {
+        if (!started) {
+          startMusic();
+          return;
+        }
+        if (playing) {
+          audio.pause();
+          playing = false;
+          btn.classList.add('muted');
+        } else {
+          audio.play().then(() => {
+            playing = true;
+            btn.classList.remove('muted');
+          }).catch(() => {});
+        }
+      });
+    })();
 
     /* ── FLOATING HEARTS CANVAS ── */
     (function () {
