@@ -832,7 +832,7 @@
   </section>
 
   <!-- MUSIC -->
-  <audio id="js-music" loop preload="none">
+  <audio id="js-music" loop preload="auto">
     <source src="music.mpeg" type="audio/mpeg">
   </audio>
   <button type="button" class="music-btn muted" id="js-music-btn" aria-label="Toggle music" title="Musik">
@@ -877,50 +877,30 @@
       const audio = document.getElementById('js-music');
       const btn   = document.getElementById('js-music-btn');
       let started = false;
-      let playing = false;
 
-      audio.volume = 0;
+      audio.volume = 0.35;
 
-      function fadeIn() {
-        audio.volume = 0;
-        const step = setInterval(() => {
-          if (audio.volume < 0.38) {
-            audio.volume = Math.min(0.38, audio.volume + 0.02);
-          } else {
-            clearInterval(step);
-          }
-        }, 80);
-      }
-
-      function startMusic() {
+      function tryPlay() {
         if (started) return;
         started = true;
-        audio.load();
         audio.play().then(() => {
-          playing = true;
           btn.classList.remove('muted');
-          fadeIn();
-        }).catch(() => {});
+        }).catch(() => {
+          started = false; /* allow retry on click */
+        });
       }
 
       /* mulai saat scroll pertama */
-      window.addEventListener('scroll', startMusic, { once: true, passive: true });
+      window.addEventListener('scroll', tryPlay, { once: true, passive: true });
 
       /* toggle tombol */
       btn.addEventListener('click', () => {
-        if (!started) {
-          startMusic();
-          return;
-        }
-        if (playing) {
-          audio.pause();
-          playing = false;
-          btn.classList.add('muted');
+        if (!started) { tryPlay(); return; }
+        if (audio.paused) {
+          audio.play().then(() => btn.classList.remove('muted')).catch(() => {});
         } else {
-          audio.play().then(() => {
-            playing = true;
-            btn.classList.remove('muted');
-          }).catch(() => {});
+          audio.pause();
+          btn.classList.add('muted');
         }
       });
     })();
