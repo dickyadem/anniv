@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cerita Kita</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="foto/a960772a0d5005f22754a5cafb9f4b71.webp" type="image/webp">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #09090b;
+      --surface:      #0f0f12;
+      --text:         #f7f4f0;
+      --text-muted:   #6b6560;
+      --accent:       #d4796a;
+      --accent-light: #ebb8ae;
+    }
+
+    html { overflow-x: hidden; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ─── HERO ───────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: -12%;
+      background: url('foto/a960772a0d5005f22754a5cafb9f4b71.webp') center/cover no-repeat;
+      filter: brightness(0.28) saturate(0.7);
+      will-change: transform;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 2rem;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(5rem, 16vw, 13rem);
+      font-weight: 300;
+      line-height: 0.88;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      opacity: 0;
+      transform: translateY(50px);
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .hero-rule {
+      width: 1px;
+      height: 0;
+      background: var(--accent);
+      margin: 2rem auto 0;
+    }
+
+    .hero-tagline {
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0;
+    }
+
+    /* ─── SPLIT ──────────────────────────────────────── */
+    .split-section {
+      display: grid;
+      grid-template-columns: 45fr 55fr;
+      min-height: 100dvh;
+    }
+
+    .split-text {
+      display: flex;
+      align-items: center;
+      padding: 5rem 5vw 5rem 6vw;
+    }
+
+    .split-text-inner { max-width: 380px; }
+
+    .eyebrow {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.75rem;
+    }
+
+    .section-heading {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.5rem, 4.5vw, 3.75rem);
+      font-weight: 300;
+      line-height: 1.08;
+      margin-bottom: 1.75rem;
+    }
+
+    .section-body {
+      font-size: 0.95rem;
+      line-height: 1.85;
+      color: var(--text-muted);
+      max-width: 38ch;
+    }
+
+    .split-photo {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .split-photo img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      will-change: transform;
+    }
+
+    /* ─── ZOOM CINEMA (video) ────────────────────────── */
+    .zoom-section {
+      height: 280vh;
+      position: relative;
+    }
+
+    .zoom-sticky {
+      position: sticky;
+      top: 0;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    .zoom-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      will-change: transform, filter;
+      transform: scale(0.72);
+      filter: brightness(0.45) saturate(0.7);
+    }
+
+    .zoom-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .zoom-text {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.5rem, 7vw, 7rem);
+      font-weight: 300;
+      font-style: italic;
+      text-align: center;
+      color: #fff;
+      opacity: 0;
+      text-shadow: 0 4px 60px rgba(0,0,0,0.7);
+      padding: 0 2rem;
+    }
+
+    /* ─── QUOTE ──────────────────────────────────────── */
+    .quote-section {
+      min-height: 55dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 4rem;
+      background: var(--surface);
+    }
+
+    .quote-inner {
+      max-width: 680px;
+      text-align: center;
+    }
+
+    .quote-mark {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 6rem;
+      line-height: 0.4;
+      color: var(--accent);
+      opacity: 0.4;
+      display: block;
+      margin-bottom: 1.5rem;
+    }
+
+    .quote-text {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.45;
+      color: var(--text);
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    /* ─── DUO PHOTOS ─────────────────────────────────── */
+    .duo-section {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 1.25rem;
+      padding: 5rem 4vw;
+      align-items: start;
+      background: var(--bg);
+    }
+
+    .duo-photo {
+      overflow: hidden;
+      border-radius: 1px;
+    }
+
+    .duo-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      will-change: transform;
+      transform: scale(1.08);
+    }
+
+    .duo-photo:nth-child(1) { height: 75dvh; }
+    .duo-photo:nth-child(2) {
+      height: 50dvh;
+      align-self: end;
+      margin-bottom: 4rem;
+      opacity: 0;
+      transform: translateY(80px);
+    }
+
+    .duo-1-wrap {
+      opacity: 0;
+      transform: translateY(60px);
+    }
+
+    /* ─── STRIP / PHOTOMATICS ────────────────────────── */
+    .strip-section {
+      padding: 7rem 4vw;
+      background: var(--surface);
+      display: flex;
+      justify-content: center;
+    }
+
+    .strip-inner {
+      max-width: 620px;
+      width: 100%;
+    }
+
+    .strip-frame {
+      overflow: hidden;
+      border-radius: 1px;
+      opacity: 0;
+      transform: rotate(-3deg) scale(0.82);
+      will-change: transform, opacity;
+    }
+
+    .strip-frame img {
+      width: 100%;
+      display: block;
+    }
+
+    /* ─── VIDEO SECTION ──────────────────────────────── */
+    .video-section {
+      position: relative;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .video-bg {
+      position: absolute;
+      inset: 0;
+    }
+
+    .video-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.38) saturate(0.65);
+    }
+
+    .video-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .video-heading {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(3.5rem, 10vw, 10rem);
+      font-weight: 300;
+      line-height: 0.92;
+      color: #fff;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .video-heading em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    /* ─── CLOSING ────────────────────────────────────── */
+    .closing-section {
+      min-height: 85dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3rem;
+      padding: 8rem 2rem;
+      background: var(--bg);
+      text-align: center;
+    }
+
+    .closing-line {
+      width: 1px;
+      height: 0;
+      background: linear-gradient(to bottom, transparent, var(--accent) 50%, transparent);
+      will-change: height;
+    }
+
+    .closing-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(3.5rem, 10vw, 9rem);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 0.93;
+      color: var(--text);
+      opacity: 0;
+      transform: translateY(50px);
+    }
+
+    .closing-date {
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      opacity: 0;
+    }
+
+    /* ─── GALLERY ───────────────────────────────────── */
+    .gallery-section {
+      padding: 5rem 2vw 6rem;
+      background: var(--bg);
+    }
+
+    .gallery-header {
+      max-width: 1400px;
+      margin: 0 auto 2.5rem;
+      padding: 0 0.4rem;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .gallery-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      font-weight: 300;
+      line-height: 0.9;
+      color: var(--text);
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .gallery-title em {
+      font-style: italic;
+      color: var(--accent-light);
+    }
+
+    .gallery-sub {
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0;
+      padding-bottom: 0.6rem;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-areas:
+        "a a b"
+        "c d e"
+        "f g g";
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .g-item {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .g-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transform: scale(1.07);
+      will-change: transform;
+    }
+
+    /* hover caption overlay */
+    .g-caption {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      padding: 1.75rem 1.5rem;
+      background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.68) 0%,
+        rgba(0,0,0,0.12) 42%,
+        transparent 100%
+      );
+      opacity: 0;
+      transition: opacity 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .g-item:hover .g-caption { opacity: 1; }
+
+    .g-caption-word {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.4rem, 2.4vw, 2.2rem);
+      font-weight: 300;
+      font-style: italic;
+      color: #fff;
+      transform: translateY(16px);
+      transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+      line-height: 1;
+    }
+
+    .g-item:hover .g-caption-word { transform: translateY(0); }
+
+    .g-a { grid-area: a; height: 56dvh; }
+    .g-b { grid-area: b; height: 56dvh; }
+    .g-c { grid-area: c; height: 38dvh; }
+    .g-d { grid-area: d; height: 38dvh; }
+    .g-e { grid-area: e; height: 38dvh; }
+    .g-f { grid-area: f; height: 56dvh; }
+    .g-g { grid-area: g; height: 56dvh; }
+
+    /* ─── MOBILE ─────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .split-section {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .split-photo {
+        height: 65dvh;
+        position: relative;
+      }
+      .split-photo img { position: relative; inset: auto; height: 100%; }
+      .split-text {
+        padding: 3.5rem 1.5rem;
+      }
+      .duo-section {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 3rem 1.5rem;
+      }
+      .duo-photo:nth-child(1) { height: 60dvh; }
+      .duo-photo:nth-child(2) { height: 45dvh; margin-bottom: 0; }
+      .quote-section { padding: 5rem 2rem; }
+      .gallery-grid {
+        grid-template-areas: "a" "b" "c" "d" "e" "f" "g";
+        grid-template-columns: 1fr;
+      }
+      .g-a, .g-b, .g-c, .g-d, .g-e, .g-f, .g-g { height: 60dvh; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-title, .hero-tagline, .quote-text,
+      .closing-title, .closing-date, .video-heading,
+      .zoom-text, .duo-1-wrap, .duo-photo:nth-child(2) {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .hero-rule { height: 60px !important; }
+      .closing-line { height: 80px !important; }
+      .strip-frame { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1 HERO -->
+  <section class="hero">
+    <div class="hero-bg" id="js-hero-bg"></div>
+    <div class="hero-content">
+      <h1 class="hero-title" id="js-hero-title">
+        <em>Cerita</em><br>Kita
+      </h1>
+      <div class="hero-rule" id="js-hero-rule"></div>
+      <p class="hero-tagline" id="js-hero-tagline">bersama dalam setiap momen</p>
+    </div>
+  </section>
+
+  <!-- 2 SPLIT -->
+  <section class="split-section">
+    <div class="split-text">
+      <div class="split-text-inner" id="js-split-text">
+        <span class="eyebrow">Awal mula</span>
+        <h2 class="section-heading">
+          Tawa yang<br>tak pernah<br>habis
+        </h2>
+        <p class="section-body">
+          Setiap foto menyimpan senyum yang nyata.
+          Bukan dibuat-buat, tapi lahir dari kebersamaan
+          yang tulus dan hangat.
+        </p>
+      </div>
+    </div>
+    <div class="split-photo">
+      <img id="js-split-img" src="foto/VUXXzITJV4cyJkds1Qruza0JTmytlCn627pSVkKa.webp" alt="Berdua" loading="lazy" decoding="async" />
+    </div>
+  </section>
+
+  <!-- 3 ZOOM CINEMA (VIDEO) -->
+  <section class="zoom-section">
+    <div class="zoom-sticky">
+      <video class="zoom-video" id="js-zoom-video" muted loop playsinline preload="none">
+        <source src="video/s02G4XBqTdhDQ68MnUDICqua2defQx1H5P7qRqCJ.mp4" type="video/mp4">
+      </video>
+      <div class="zoom-overlay">
+        <p class="zoom-text" id="js-zoom-text">Kuat bersama</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 QUOTE -->
+  <section class="quote-section">
+    <div class="quote-inner">
+      <span class="quote-mark">"</span>
+      <blockquote class="quote-text" id="js-quote">
+        Kamu adalah rumah<br>yang selalu ingin aku pulang.
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- 5 DUO PHOTOS -->
+  <section class="duo-section">
+    <div class="duo-photo duo-1-wrap" id="js-duo-1">
+      <img id="js-duo-1-img" src="foto/hdYsZOJOKkASHsxExaPSb9JpjNwnF6UCatAa2rim.webp" alt="Kompak" loading="lazy" decoding="async" />
+    </div>
+    <div class="duo-photo" id="js-duo-2">
+      <img id="js-duo-2-img" src="foto/nKO6q2VkjuM3M0mT5TaC3zddv2d5A48jMiBLLRrH.webp" alt="Kuat" loading="lazy" decoding="async" />
+    </div>
+  </section>
+
+  <!-- 6 PHOTOMATICS STRIP -->
+  <section class="strip-section">
+    <div class="strip-inner">
+      <div class="strip-frame" id="js-strip">
+        <img src="foto/vV67frer99ikRHF6ALXbbGDZHmSCUoLPWTPOlcCd.webp" alt="Kenangan bersama" loading="lazy" decoding="async" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 GALLERY -->
+  <section class="gallery-section">
+    <div class="gallery-header">
+      <h2 class="gallery-title" id="js-gallery-title"><em>Momen</em> Kita</h2>
+      <span class="gallery-sub" id="js-gallery-sub">foto pilihan</span>
+    </div>
+    <div class="gallery-grid">
+      <div class="g-item g-a" data-gallery>
+        <img src="foto/IMG20260419184852.webp" alt="Jalan bersama" loading="lazy" decoding="async" />
+        <div class="g-caption"><span class="g-caption-word">Bersama</span></div>
+      </div>
+      <div class="g-item g-b" data-gallery>
+        <img src="foto/selfie-time-1776598264825.webp" alt="Seru bersama" loading="lazy" decoding="async" />
+        <div class="g-caption"><span class="g-caption-word">Bahagia</span></div>
+      </div>
+      <div class="g-item g-c" data-gallery>
+        <img src="foto/image-5_1.webp" alt="Nonton bersama" loading="lazy" decoding="async" />
+        <div class="g-caption"><span class="g-caption-word">Dekat</span></div>
+      </div>
+      <div class="g-item g-d" data-gallery>
+        <img src="foto/9FBP3lU4zJfyapVa1AH3mjn2fveAUdAOliE6Exsy.webp" alt="Gemes berdua" loading="lazy" decoding="async" />
+        <div class="g-caption"><span class="g-caption-word">Manis</span></div>
+      </div>
+      <div class="g-item g-e" data-gallery>
+        <img src="foto/xhAWEPDcHopNTFgRUcTSOJG52sv4GfJr2511AGFF.webp" alt="Santai berdua" loading="lazy" decoding="async" />
+        <div class="g-caption"><span class="g-caption-word">Santai</span></div>
+      </div>
+      <div class="g-item g-f" data-gallery>
+        <img src="foto/a960772a0d5005f22754a5cafb9f4b71.webp" alt="Kenangan" loading="lazy" decoding="async" />
+        <div class="g-caption"><span class="g-caption-word">Kenangan</span></div>
+      </div>
+      <div class="g-item g-g" data-gallery>
+        <img src="foto/feCmbBdqYg84PMzg3ufCH0tMLKe6IM6WjX5I6FSD.webp" alt="Gaya bersama" loading="lazy" decoding="async" />
+        <div class="g-caption"><span class="g-caption-word">Kompak</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 VIDEO SECTION 2 -->
+  <section class="video-section">
+    <div class="video-bg">
+      <video id="js-vid-2" muted loop playsinline preload="none">
+        <source src="video/v2Li2ZfOhhwsaJ86Hda2KVpEQgurjEJ2Hy7BkK9R.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="video-content">
+      <h2 class="video-heading" id="js-video-heading">
+        Setiap<br><em>Detik</em>
+      </h2>
+    </div>
+  </section>
+
+  <!-- 8 CLOSING -->
+  <section class="closing-section">
+    <div class="closing-line" id="js-closing-line"></div>
+    <h2 class="closing-title" id="js-closing-title">
+      Semoga<br><em style="font-style:italic; color:var(--accent-light)">selamanya</em>
+    </h2>
+    <p class="closing-date" id="js-closing-date">2024 - untuk selamanya</p>
+  </section>
+
+  <script>
+    /* ── VIDEO LAZY PLAY (IntersectionObserver) ── */
+    const videoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const v = entry.target;
+        if (entry.isIntersecting) {
+          v.play().catch(() => {});
+        } else {
+          v.pause();
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('video[preload="none"]').forEach(v => videoObserver.observe(v));
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+
+      /* ── HERO ENTER ── */
+      const heroTl = gsap.timeline({ delay: 0.2 });
+      heroTl
+        .to('#js-hero-title', {
+          opacity: 1, y: 0,
+          duration: 1.6, ease: 'power3.out'
+        })
+        .to('#js-hero-rule', {
+          height: 60,
+          duration: 0.8, ease: 'power2.out'
+        }, '-=0.6')
+        .to('#js-hero-tagline', {
+          opacity: 1,
+          duration: 0.8, ease: 'power2.out'
+        }, '-=0.4');
+
+      /* ── HERO BG PARALLAX ZOOM OUT ── */
+      gsap.to('#js-hero-bg', {
+        scale: 1.22,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+
+      /* hero content fades as you scroll away */
+      gsap.to('.hero-content', {
+        opacity: 0, y: -50,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero',
+          start: '55% top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+
+      /* ── SPLIT TEXT SLIDE IN ── */
+      gsap.from('#js-split-text', {
+        x: -70, opacity: 0,
+        duration: 1.1, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.split-section',
+          start: 'top 72%'
+        }
+      });
+
+      /* SPLIT photo - reverse parallax (zooms as section enters) */
+      gsap.fromTo('#js-split-img',
+        { scale: 1.25 },
+        {
+          scale: 1.0,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.split-section',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true
+          }
+        }
+      );
+
+      /* ── ZOOM CINEMA ── */
+      const zoomTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.zoom-section',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 1.2
+        }
+      });
+
+      zoomTl
+        .to('#js-zoom-video', {
+          scale: 1.12,
+          filter: 'brightness(0.72) saturate(0.8)',
+          ease: 'none',
+          duration: 0.5
+        })
+        .to('#js-zoom-text', {
+          opacity: 1, ease: 'none', duration: 0.15
+        }, 0.2)
+        .to('#js-zoom-text', {
+          opacity: 0, ease: 'none', duration: 0.15
+        }, 0.72)
+        .to('#js-zoom-video', {
+          scale: 0.82,
+          filter: 'brightness(0.3) saturate(0.4)',
+          ease: 'none',
+          duration: 0.3
+        }, 0.72);
+
+      /* ── QUOTE FADE UP ── */
+      gsap.to('#js-quote', {
+        opacity: 1, y: 0,
+        duration: 1.2, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.quote-section',
+          start: 'top 68%'
+        }
+      });
+
+      /* ── DUO PHOTOS ── */
+      gsap.to('#js-duo-1', {
+        opacity: 1, y: 0,
+        duration: 1.2, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.duo-section',
+          start: 'top 78%'
+        }
+      });
+
+      gsap.to('#js-duo-2', {
+        opacity: 1, y: 0,
+        duration: 1.4, ease: 'power3.out',
+        delay: 0.18,
+        scrollTrigger: {
+          trigger: '.duo-section',
+          start: 'top 78%'
+        }
+      });
+
+      /* DUO inner parallax - different scroll rates */
+      gsap.to('#js-duo-1-img', {
+        y: -50,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.duo-section',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+
+      gsap.to('#js-duo-2-img', {
+        y: 50,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.duo-section',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+
+      /* ── STRIP ROTATE + SCALE ── */
+      gsap.to('#js-strip', {
+        rotation: 0,
+        scale: 1,
+        opacity: 1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.strip-section',
+          start: 'top 75%',
+          end: 'center 55%',
+          scrub: 1
+        }
+      });
+
+      /* ── GALLERY HEADER ── */
+      gsap.to('#js-gallery-title', {
+        opacity: 1, y: 0,
+        duration: 1.2, ease: 'power3.out',
+        scrollTrigger: { trigger: '.gallery-section', start: 'top 80%' }
+      });
+      gsap.to('#js-gallery-sub', {
+        opacity: 1,
+        duration: 0.8, ease: 'power2.out',
+        delay: 0.25,
+        scrollTrigger: { trigger: '.gallery-section', start: 'top 80%' }
+      });
+
+      /* ── GALLERY STAGGER + PARALLAX ── */
+      gsap.utils.toArray('[data-gallery]').forEach((el, i) => {
+        gsap.from(el, {
+          opacity: 0,
+          y: 50,
+          duration: 1,
+          ease: 'power3.out',
+          delay: (i % 3) * 0.1,
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%'
+          }
+        });
+        gsap.to(el.querySelector('img'), {
+          scale: 1.0,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true
+          }
+        });
+      });
+
+      /* ── VIDEO HEADING ── */
+      gsap.to('#js-video-heading', {
+        opacity: 1, y: 0,
+        duration: 1.2, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.video-section',
+          start: 'top 72%'
+        }
+      });
+
+      /* ── CLOSING ── */
+      gsap.to('#js-closing-line', {
+        height: 80,
+        duration: 0.9, ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.closing-section',
+          start: 'top 80%'
+        }
+      });
+
+      gsap.to('#js-closing-title', {
+        opacity: 1, y: 0,
+        duration: 1.5, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.closing-section',
+          start: 'top 72%'
+        }
+      });
+
+      gsap.to('#js-closing-date', {
+        opacity: 1,
+        duration: 1, ease: 'power2.out',
+        delay: 0.3,
+        scrollTrigger: {
+          trigger: '.closing-section',
+          start: 'top 72%'
+        }
+      });
+    }
+  </script>
+</body>
+</html>
